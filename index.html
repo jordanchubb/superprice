@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+	<meta charset=utf-8>
+	<link rel=stylesheet href="https://cdn.jsdelivr.net/npm/@meilisearch/instant-meilisearch/templates/basic_search.css">
+</head>
+<body>
+	<div id=sort style=display:none;></div>
+	<div class=wrapper>
+		<h2 style=text-align:center;>SuperPrice</h2>
+		<p style=text-align:center;>NZ supermarket price consistency September 2021 to April 2022</p>
+		<div id=searchbox focus></div>
+		<div id=hits></div>
+	</div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/@meilisearch/instant-meilisearch@0.7.0/dist/instant-meilisearch.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.40.5/dist/instantsearch.production.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.11.1.min.js"></script>
+<script>
+	const api_host = 'https://api.superprice.nz:54933';
+	function sortAdded(mutations) {
+		mutations[0]['addedNodes'][0]['childNodes'][0].selectedIndex = 0;
+		mutations[0]['addedNodes'][0]['childNodes'][0].dispatchEvent(new Event('change'));
+	}
+	new MutationObserver(sortAdded).observe(document.getElementById('sort'), {'childList':true});
+	function showTable(hit, id) {
+		hit.onclick = null; //can only click once
+		fetch(api_host+'/indexes/supermarkets/documents/'+id)
+		.then(response => response.json())
+		.then(json_data => createTable(hit, json_data, id));
+	}
+	function hideTable(hit, id) {
+		hit.setAttribute('onclick',`showTable(this,'${id}')`);
+		document.getElementById(id).querySelector('.plot').innerHTML = '';
+	}
+	function createTable(hit, json_data, id) {
+		hit.setAttribute('onclick',`hideTable(this,'${id}')`);
+		console.log(json_data);
+		let raw_paknsave = [], raw_newworld = [], raw_countdown = [], raw_warehouse = [];
+		for (let [key, value] of Object.entries(json_data)) {
+			let [shop, date] = key.split(' ');
+			if (shop == 'PakNSave') {
+				raw_paknsave.push({date:date, value:value});
+			} else if (shop == 'NewWorld') {
+				raw_newworld.push({date:date, value:value});
+			} else if (shop == 'Countdown') {
+				raw_countdown.push({date:date, value:value});
+			} else if (shop == 'TheWarehouse') {
+				raw_warehouse.push({date:date, value:value});
+			}
+		}
+		let paknsave = {x:[], y:[], text:[], mode:'lines+markers', name:"Pak'nSave", line:{width:2, color:'rgb(255,214,0)'}};
+		let newworld = {x:[], y:[], text:[], mode:'lines+markers', name:'New World', line:{width:2, color:'rgb(225,26,44)'}};
+		let countdown = {x:[], y:[], text:[], mode:'lines+markers', name:'Countdown', line:{width:2, color:'rgb(0,120,55)'}};
+		let warehouse = {x:[], y:[], text:[], mode:'lines+markers', name:'The Warehouse', line:{width:2, color:'rgb(0,0,0)'}};
+		raw_paknsave.sort(function(a,b) {return a.date > b.date}).forEach(function(data) {
+			paknsave.x.push(data.date);
+			if (data.value.ProductDetails.HasMultiBuyDeal) {
+				paknsave.y.push((data.value.ProductDetails.MultiBuyPrice / data.value.ProductDetails.MultiBuyQuantity).toFixed(2));
+				paknsave.text.push(data.value.ProductDetails.MultiBuyDeal);
+			} else {
+				if (data.value.ProductDetails.MultiBuyPrice && data.value.ProductDetails.PricePerItem != data.value.ProductDetails.MultiBuyPrice) {
+					console.log(data.value.ProductDetails); //just to check
+				}
+				paknsave.y.push(data.value.ProductDetails.PricePerItem);
+				if (data.value.ProductDetails.PromoBadgeImageLabel != 'Everyday Low') {
+					paknsave.text.push(data.value.ProductDetails.PromoBadgeImageLabel);
+				} else {
+					paknsave.text.push('');
+				}
+			}
+		});
+		raw_newworld.sort(function(a,b) {return a.date > b.date}).forEach(function(data) {
+			newworld.x.push(data.date);
+			if (data.value.ProductDetails.HasMultiBuyDeal) {
+				newworld.y.push((data.value.ProductDetails.MultiBuyPrice / data.value.ProductDetails.MultiBuyQuantity).toFixed(2));
+				newworld.text.push(data.value.ProductDetails.MultiBuyDeal);
+			} else {
+				if (data.value.ProductDetails.MultiBuyPrice && data.value.ProductDetails.PricePerItem != data.value.ProductDetails.MultiBuyPrice) {
+					console.log(data.value.ProductDetails); //just to check
+				}
+				newworld.y.push(data.value.ProductDetails.PricePerItem);
+				newworld.text.push(data.value.ProductDetails.PromoBadgeImageLabel);
+			}
+		});
+		raw_countdown.sort(function(a,b) {return a.date > b.date}).forEach(function(data) {
+			countdown.x.push(data.date);
+			if (data.value.sale == 'Special.') {
+				if (data.value.saving.includes('for $')) {
+					let saving =  data.value.saving.split('for $');
+					countdown.y.push(parseFloat(saving[1]) / parseFloat(saving[0]));
+					countdown.text.push(data.value.price + ' or ' + data.value.saving);
+				} else {
+					countdown.y.push(data.value.price);
+					countdown.text.push(data.value.saving);
+				}
+			} else if (data.value.sale == 'Club Price.') { //will always have a non_club_price
+				countdown.y.push(data.value.price);
+				countdown.text.push(data.value.sale + ' ' + data.value.non_club_price);
+			} else {
+				console.log(data.value.sale, data.value.saving, data.value.price_was_saving)
+				countdown.y.push(data.value.price);
+				countdown.text.push(data.value.price_was_saving);
+			}
+		});
+		raw_warehouse.sort(function(a,b) {return a.date > b.date}).forEach(function(data) {
+			warehouse.x.push(data.date);
+			warehouse.y.push(data.value.price);
+			if (data.value.productBadges != 'na') {
+				warehouse.text.push(data.value.productBadges);
+			} else {
+				warehouse.text.push('');
+			}
+		});
+		let plot_div = document.getElementById(id).querySelector('.plot');
+		let data = [warehouse, paknsave, newworld, countdown];
+		let layout = {showlegend:false};
+		let config = {displaylogo:false, displayModeBar:true, responsive:true, showEditInChartStudio:true, plotlyServerURL:"https://chart-studio.plotly.com", modeBarButtonsToRemove:['select2d','lasso2d','zoomIn2d','zoomOut2d','autoScale2d']}; //'zoom2d','pan2d',
+		Plotly.newPlot(plot_div, data, layout, config);
+	}
+	const search = instantsearch({
+		indexName: "supermarkets",
+		searchClient: instantMeiliSearch(api_host)
+	});
+	search.addWidgets([
+		instantsearch.widgets.searchBox({
+			container: "#searchbox",
+			placeholder: 'weetbix 1.2kg countdown',
+			autofocus: true,
+			showSubmit: false
+		}),
+		instantsearch.widgets.configure({
+			hitsPerPage: 20,
+			attributesToHighlight: ['name','store'],
+			attributesToRetrieve: ['id','name','store']
+		}),
+		instantsearch.widgets.sortBy({
+			container: '#sort',
+			items: [{label:'sort', value:'supermarkets:ranking:asc'}],
+		}),
+		instantsearch.widgets.hits({
+			container: "#hits",
+			templates: {
+				item(hit) {
+					return `
+<div id='${hit['id']}'>
+	<div onclick=showTable(this,'${hit['id']}')>
+		<div class=hit-name>
+			${instantsearch.highlight({attribute:'name', hit})}
+		</div>
+		<div class='hit-description'>
+			${instantsearch.highlight({attribute:'store', hit})}
+		</div>
+		<div>
+			${instantsearch.highlight({attribute:'ranking', hit})}
+		</div>
+	</div>
+	<div class=plot></div>
+</div>
+`
+				}
+			}
+		})
+	]);
+	search.start();
+</script>
+</html>
