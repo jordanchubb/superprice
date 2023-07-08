@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html lang=en>
+<body>
+<div id=product_description><h3>The Warehouse<br><br>Adidas Team Force Giftset<br><br></h3></div>
+<div id=graph></div>
+<br>
+<div id=data></div>
+</body>
+<script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
+<script>
+let json_data = {"2021-12-17": {"name": "Adidas Team Force Giftset", "id": "R2780654", "variationProductId": "R2780654", "brand": "Adidas", "productEAN": "3616302027644", "productMerchandiseCategory": "9361", "productBadges": "bogo50%off-promo", "productRating": "na", "productOnlineStockStatus": "IN_STOCK", "customDimension1": "", "promotionCallOutMessage": "Buy 1 get 1 HALF PRICE Health and Beauty Giftsets|Spend $50 get $5 off. Download our app and join MarketClub", "category": "healthbeauty/healthbeauty-giftsets/healthbeauty-fragrances-giftsets-mensgiftsets", "productCategoryLevel1": "healthbeauty", "productCategoryLevel2": "healthbeauty-giftsets", "productCategoryLevel3": "healthbeauty-fragrances-giftsets-mensgiftsets", "productCategoryLevel4": "na", "productCategoryLevel5": "na", "productCategoryLevel6": "na", "productCategoryLevel7": "na", "productSecondaryNavigationCategory": "healthbeauty/healthbeauty-bathbody/healthbeauty-bathbody-bathbodysets/healthbeauty-bathbody-bathbodysets-menssets|foodhouseholdpets/foodhouseholdpets-multibuys|multibuys/multibuys-foodhouseholdpets|specials/specials-christmasdeals/specials-christmasdeals-beautygiftsetdeals|specials/specials-healthbeauty", "price": "15.00", "productThenPrice": "15.00", "list": "foodhouseholdpets"}, "2021-12-18": {"name": "Adidas Team Force Giftset", "id": "R2780654", "variationProductId": "R2780654", "brand": "Adidas", "productEAN": "3616302027644", "productMerchandiseCategory": "9361", "productBadges": "bogo50%off-promo", "productRating": "na", "productOnlineStockStatus": "IN_STOCK", "customDimension1": "", "promotionCallOutMessage": "Buy 1 get 1 HALF PRICE Health and Beauty Giftsets|Spend $50 get $5 off. Download our app and join MarketClub", "category": "healthbeauty/healthbeauty-giftsets/healthbeauty-fragrances-giftsets-mensgiftsets", "productCategoryLevel1": "healthbeauty", "productCategoryLevel2": "healthbeauty-giftsets", "productCategoryLevel3": "healthbeauty-fragrances-giftsets-mensgiftsets", "productCategoryLevel4": "na", "productCategoryLevel5": "na", "productCategoryLevel6": "na", "productCategoryLevel7": "na", "productSecondaryNavigationCategory": "healthbeauty/healthbeauty-bathbody/healthbeauty-bathbody-bathbodysets/healthbeauty-bathbody-bathbodysets-menssets|foodhouseholdpets/foodhouseholdpets-multibuys|multibuys/multibuys-foodhouseholdpets|specials/specials-christmasdeals/specials-christmasdeals-beautygiftsetdeals|specials/specials-healthbeauty", "price": "15.00", "productThenPrice": "15.00", "list": "foodhouseholdpets"}, "2021-12-19": {"name": "Adidas Team Force Giftset", "id": "R2780654", "variationProductId": "R2780654", "brand": "Adidas", "productEAN": "3616302027644", "productMerchandiseCategory": "9361", "productBadges": "bogo50%off-promo", "productRating": "na", "productOnlineStockStatus": "IN_STOCK", "customDimension1": "", "promotionCallOutMessage": "Buy 1 get 1 HALF PRICE Health and Beauty Giftsets|Spend $50 get $5 off. Download our app and join MarketClub", "category": "healthbeauty/healthbeauty-giftsets/healthbeauty-fragrances-giftsets-mensgiftsets", "productCategoryLevel1": "healthbeauty", "productCategoryLevel2": "healthbeauty-giftsets", "productCategoryLevel3": "healthbeauty-fragrances-giftsets-mensgiftsets", "productCategoryLevel4": "na", "productCategoryLevel5": "na", "productCategoryLevel6": "na", "productCategoryLevel7": "na", "productSecondaryNavigationCategory": "healthbeauty/healthbeauty-bathbody/healthbeauty-bathbody-bathbodysets/healthbeauty-bathbody-bathbodysets-menssets|foodhouseholdpets/foodhouseholdpets-multibuys|multibuys/multibuys-foodhouseholdpets|specials/specials-christmasdeals/specials-christmasdeals-beautygiftsetdeals|specials/specials-healthbeauty", "price": "15.00", "productThenPrice": "15.00", "list": "foodhouseholdpets"}, "2021-12-20": {"name": "Adidas Team Force Giftset", "id": "R2780654", "variationProductId": "R2780654", "brand": "Adidas", "productEAN": "3616302027644", "productMerchandiseCategory": "9361", "productBadges": "na", "productRating": "na", "productOnlineStockStatus": "IN_STOCK", "customDimension1": "", "promotionCallOutMessage": "Spend $50 get $5 off. Download our app and join MarketClub", "category": "healthbeauty/healthbeauty-giftsets/healthbeauty-fragrances-giftsets-mensgiftsets", "productCategoryLevel1": "healthbeauty", "productCategoryLevel2": "healthbeauty-giftsets", "productCategoryLevel3": "healthbeauty-fragrances-giftsets-mensgiftsets", "productCategoryLevel4": "na", "productCategoryLevel5": "na", "productCategoryLevel6": "na", "productCategoryLevel7": "na", "productSecondaryNavigationCategory": "healthbeauty/healthbeauty-bathbody/healthbeauty-bathbody-bathbodysets/healthbeauty-bathbody-bathbodysets-menssets|foodhouseholdpets/foodhouseholdpets-multibuys|multibuys/multibuys-foodhouseholdpets|specials/specials-healthbeauty", "price": "15.00", "productThenPrice": "15.00", "list": "foodhouseholdpets"}};
+console.log(json_data);
+let raw_data = [];
+for (let [date, value] of Object.entries(json_data)) {
+    raw_data.push({date:date, value:value});
+}
+
+let processed_data = {x:[], y:[], text:[], mode:'lines+markers', name:'The Warehouse', line:{width:2, color:'rgb(0,0,0)'}};
+raw_data.sort(function(a,b) {return a.date > b.date}).forEach(function(data) {
+    processed_data.x.push(data.date);
+    processed_data.y.push(data.value.price);
+    if (data.value.productBadges != 'na') {
+        processed_data.text.push(data.value.productBadges);
+    } else {
+        processed_data.text.push('');
+    }
+});
+
+let graph_div = document.getElementById("graph");
+let data = [processed_data];
+let layout = {showlegend:false, yaxis:{title:{text:"$", font:{size:16}}}};
+let config = {displaylogo:false, displayModeBar:true, responsive:true, showEditInChartStudio:true, plotlyServerURL:"https://chart-studio.plotly.com", modeBarButtonsToRemove:['select2d','lasso2d','zoomIn2d','zoomOut2d','autoScale2d']}; //'zoom2d','pan2d',
+Plotly.newPlot(graph_div, data, layout, config);
+
+let data_div = document.getElementById("data");
+for (let [date, values] of Object.entries(json_data)) {
+    data_div.innerHTML += '<b>' + date + '</b><br>';
+    for (let [key, value] of Object.entries(values)) {
+        data_div.innerHTML += '&nbsp;&nbsp;&nbsp;&nbsp;' + key + ':&nbsp;' + JSON.stringify(value) + '<br>';
+    }
+    data_div.innerHTML += '<br>';
+}
+</script>
+</html>

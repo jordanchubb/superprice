@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang=en>
+<body>
+<div id=product_description><h3>Countdown<br><br>Anathoth Lemon Curd 420g<br><br></h3></div>
+<div id=graph></div>
+<br>
+<div id=data></div>
+</body>
+<script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
+<script>
+let json_data = {"2021-12-16": {"title": "Anathoth Lemon Curd", "size": "420g", "approx_single_unit_price": null, "type_size_cup": "Volume size 420g. Cup price $1.19 / 100g.", "sale": null, "saving": null, "price_was": null, "price_was_saving": null, "price": "$5.00", "unit": "each"}, "2021-12-17": {"title": "Anathoth Lemon Curd", "size": "420g", "approx_single_unit_price": null, "type_size_cup": "Volume size 420g. Cup price $1.19 / 100g.", "sale": null, "saving": null, "price_was": null, "price_was_saving": null, "price": "$5.00", "unit": "each"}, "2021-12-18": {"title": "Anathoth Lemon Curd", "size": "420g", "approx_single_unit_price": null, "type_size_cup": "Volume size 420g. Cup price $1.19 / 100g.", "sale": null, "saving": null, "price_was": null, "price_was_saving": null, "price": "$5.00", "unit": "each"}, "2021-12-19": {"title": "Anathoth Lemon Curd", "size": "420g", "approx_single_unit_price": null, "type_size_cup": "Volume size 420g. Cup price $1.19 / 100g.", "sale": null, "saving": null, "price_was": null, "price_was_saving": null, "price": "$5.00", "unit": "each"}, "2021-12-20": {"title": "Anathoth Lemon Curd", "size": "420g", "approx_single_unit_price": null, "type_size_cup": "Volume size 420g. Cup price $1.07 / 100g.", "sale": "Special.", "saving": "Save $0.50.", "price_was": "Was $5.00", "price_was_saving": "Save $0.50", "price": "$4.50", "unit": "each"}, "2021-12-21": {"title": "Anathoth Lemon Curd", "size": "420g", "approx_single_unit_price": null, "type_size_cup": "Volume size 420g. Cup price $1.07 / 100g.", "sale": "Special.", "saving": "Save $0.50.", "price_was": "Was $5.00", "price_was_saving": "Save $0.50", "price": "$4.50", "unit": "each"}, "2021-12-22": {"title": "Anathoth Lemon Curd", "size": "420g", "approx_single_unit_price": null, "type_size_cup": "Volume size 420g. Cup price $1.07 / 100g.", "sale": "Special.", "saving": "Save $0.50.", "price_was": "Was $5.00", "price_was_saving": "Save $0.50", "price": "$4.50", "unit": "each"}, "2021-12-23": {"title": "Anathoth Lemon Curd", "size": "420g", "approx_single_unit_price": null, "type_size_cup": "Volume size 420g. Cup price $1.07 / 100g.", "sale": "Special.", "saving": "Save $0.50.", "price_was": "Was $5.00", "price_was_saving": "Save $0.50", "price": "$4.50", "unit": "each"}, "2021-12-24": {"title": "Anathoth Lemon Curd", "size": "420g", "approx_single_unit_price": null, "type_size_cup": "Volume size 420g. Cup price $1.07 / 100g.", "sale": "Special.", "saving": "Save $0.50.", "price_was": "Was $5.00", "price_was_saving": "Save $0.50", "price": "$4.50", "unit": "each"}, "2021-12-27": {"title": "Anathoth Lemon Curd", "size": "420g", "approx_single_unit_price": null, "type_size_cup": "Volume size 420g. Cup price $1.07 / 100g.", "sale": "Special.", "saving": "Save $0.50.", "price_was": "Was $5.00", "price_was_saving": "Save $0.50", "price": "$4.50", "unit": "each"}, "2021-12-28": {"title": "Anathoth Lemon Curd", "size": "420g", "approx_single_unit_price": null, "type_size_cup": "Volume size 420g. Cup price $1.07 / 100g.", "sale": "Special.", "saving": "Save $0.50.", "price_was": "Was $5.00", "price_was_saving": "Save $0.50", "price": "$4.50", "unit": "each"}, "2021-12-29": {"title": "Anathoth Lemon Curd", "size": "420g", "approx_single_unit_price": null, "type_size_cup": "Volume size 420g. Cup price $1.07 / 100g.", "sale": "Special.", "saving": "Save $0.50.", "price_was": "Was $5.00", "price_was_saving": "Save $0.50", "price": "$4.50", "unit": "each"}, "2021-12-30": {"title": "Anathoth Lemon Curd", "size": "420g", "approx_single_unit_price": null, "type_size_cup": "Volume size 420g. Cup price $1.07 / 100g.", "sale": "Special.", "saving": "Save $0.50.", "price_was": "Was $5.00", "price_was_saving": "Save $0.50", "price": "$4.50", "unit": "each"}, "2021-12-31": {"title": "Anathoth Lemon Curd", "size": "420g", "approx_single_unit_price": null, "type_size_cup": "Volume size 420g. Cup price $1.07 / 100g.", "sale": "Special.", "saving": "Save $0.50.", "price_was": "Was $5.00", "price_was_saving": "Save $0.50", "price": "$4.50", "unit": "each"}, "2022-01-01": {"title": "Anathoth Lemon Curd", "size": "420g", "approx_single_unit_price": null, "type_size_cup": "Volume size 420g. Cup price $1.07 / 100g.", "sale": "Special.", "saving": "Save $0.50.", "price_was": "Was $5.00", "price_was_saving": "Save $0.50", "price": "$4.50", "unit": "each"}};
+console.log(json_data);
+let raw_data = [];
+for (let [date, value] of Object.entries(json_data)) {
+    raw_data.push({date:date, value:value});
+}
+
+let processed_data = {x:[], y:[], text:[], mode:'lines+markers', name:'Countdown', line:{width:2, color:'rgb(0,120,55)'}};
+raw_data.sort(function(a,b) {return a.date > b.date}).forEach(function(data) {
+    processed_data.x.push(data.date);
+    if (data.value.sale == 'Special.') {
+        if (data.value.saving.includes('for $')) {
+            let saving =  data.value.saving.split('for $');
+            processed_data.y.push(parseFloat(saving[1]) / parseFloat(saving[0]));
+            processed_data.text.push(data.value.price + ' or ' + data.value.saving);
+        } else {
+            processed_data.y.push(data.value.price);
+            processed_data.text.push(data.value.saving);
+        }
+    } else if (data.value.sale == 'Club Price.') { //will always have a non_club_price
+        processed_data.y.push(data.value.price);
+        processed_data.text.push(data.value.sale + ' ' + data.value.non_club_price);
+    } else {
+        console.log(data.value.sale, data.value.saving, data.value.price_was_saving)
+        processed_data.y.push(data.value.price);
+        processed_data.text.push(data.value.price_was_saving);
+    }
+});
+
+let graph_div = document.getElementById("graph");
+let data = [processed_data];
+let layout = {showlegend:false, yaxis:{title:{text:"$", font:{size:16}}}};
+let config = {displaylogo:false, displayModeBar:true, responsive:true, showEditInChartStudio:true, plotlyServerURL:"https://chart-studio.plotly.com", modeBarButtonsToRemove:['select2d','lasso2d','zoomIn2d','zoomOut2d','autoScale2d']}; //'zoom2d','pan2d',
+Plotly.newPlot(graph_div, data, layout, config);
+
+let data_div = document.getElementById("data");
+for (let [date, values] of Object.entries(json_data)) {
+    data_div.innerHTML += '<b>' + date + '</b><br>';
+    for (let [key, value] of Object.entries(values)) {
+        data_div.innerHTML += '&nbsp;&nbsp;&nbsp;&nbsp;' + key + ':&nbsp;' + JSON.stringify(value) + '<br>';
+    }
+    data_div.innerHTML += '<br>';
+}
+</script>
+</html>
